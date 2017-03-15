@@ -1,0 +1,79 @@
+<?php
+//namespace
+use \GatewayWorker\Lib\Gateway;
+use Fukuball\Jieba\Jieba;
+use Fukuball\Jieba\Finalseg;
+use Overtrue\Pinyin\Pinyin;
+// define('Web_Json_Path','/var/www/html/robotAdmin/json/');
+// define('Web_Admin_Path','http://119.29.2.112/robotAdmin/index.html');
+//use Overtrue\Pinyin\Pinyin;
+class adminManage{
+    private static $stateArr = array();
+    public static function showOutPut($clientId,$text)
+    {
+        //第一次触发关键词进入当前自动机
+        if(!array_key_exists($clientId, self::$stateArr)){
+            self::$stateArr[$clientId] = 1;
+            stateManage::setState($clientId,'adminManage');
+        }
+        switch (self::$stateArr[$clientId]){
+            case 1:
+                Gateway::sendToCurrentClient(Events::getInfo("欢迎建立管理端，把字段信息给我哈，多个字段空号分割。"));
+                Gateway::sendToCurrentClient(Events::getInfo("例如：图片 文字 时间"));
+                self::$stateArr[$clientId] = 2;
+                break;
+            case 2:
+                $res = self::itemAnalyse($text);
+                $fileName = rand(0,10000) . date('YmdH',time()).'.json';
+//                $parentDir = dirname(dirname(__FILE__));
+//                $parentDir = str_replace('\\','/' ,$parentDir );
+//                $dir = $parentDir.'/Web/admin/json/';
+                // $dir = "D:/wamp64/www/robotAdmin/json/";
+                if(!is_dir(Web_Json_Path)){
+                    mkdir(Web_Json_Path,'0777',true);
+                }
+                $fullPath = Web_Json_Path.$fileName;
+                $fp = fopen($fullPath,'w');
+                fwrite($fp,$res);
+                fclose($fp);
+                $tempName = explode('.',$fileName);
+//                Gateway::sendToCurrentClient(Events::getInfo("："));
+//                Gateway::sendToCurrentClient(Events::getInfo("管理端建立OK,face[太开心] a(".Web_Admin_Path."?name={$tempName[0]})[点击查看]"));
+                stateManage::setState($clientId,'simpleReply');
+                unset(self::$stateArr[$clientId]);
+                return "管理端建立OK,face[太开心] a(".Web_Admin_Path."?name={$tempName[0]})[点击查看]";
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static function itemAnalyse($text)
+    {
+        $textArr = explode(' ',$text);
+        $pinyin = new Pinyin();
+        $resArr = array('tb'=>'tb'.date('YmdHis',time()),'items'=>array());
+        foreach ($textArr as $item){
+            $item = trim($item);
+            var_dump($item);
+            $word = $pinyin->convert($item);
+//            $word = $word[0];
+            if(strpos($item,'图片') !== false){
+                $val = array('type'=>'pic','dsc'=>$item,'name'=>implode('', $word));
+            }
+            else if(strpos($item,'时间') !== false){
+                $val = array('type'=>'time','dsc'=>$item,'name'=>implode('', $word));
+            }
+            else if(strpos($item,'日期') !== false){
+                $val = array('type'=>'date','dsc'=>$item,'name'=>implode('',$word ));
+            }
+            else{
+                $val = array('type'=>'text','dsc'=>$item,'name'=>implode('', $word));
+            }
+            array_push($resArr['items'], $val);
+        }
+        unset($pinyin);
+        return json_encode($resArr);
+        
+    }
+}

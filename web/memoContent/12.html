@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>所有开发工具中的快捷键都可以在界面右下角的设置中查到。断点调试时一般用的是 F8、F10、F11或 Shitf+F11，但在 Mac OS 上 F10 等功能键可能与系统默认的快捷键冲突。没关系，它们分别可以用 Cmd+/ 、Cmd+'、Cmd+; 、Shift+Cmd+; 代替。</p><p>有时候一些非常动态的代码是以字符串的形式通过 eval() 函数在当前 Javascript context 中创建出来，而不是作为一个独立的 js 文件加载的。这样你在左边的内容区就找不到这个文件，因此很难调试。其实我们只要在 eval 创建的代码末尾添加一行 “//@ sourceURL=name“ 就可以给这段代码命名（浏览器会特殊对待这种特殊形式的注释），这样它就会出现在左侧的内容区了，就好像你加载了一个指定名字的 js 文件一样，可以设置断点和调试了。下图中，我们通过 eval 执行了一段代码，并利用 sourceURL 将它命名为 dynamicScript.js ，执行后左侧内容区就出现了这个“文件”，而它的内容就是 eval 的中的内容。</p>
+</body>
+</html>

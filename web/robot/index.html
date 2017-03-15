@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="author" content="">
+<meta name="description" content=""/>
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="white" />
+<title>小R</title>
+    <!--<link rel="stylesheet" href="robot/css/robot.css">-->
+<link rel="stylesheet" href="robot/css/common.css">
+<link rel="stylesheet" type="text/css" href="robot/fonts2/iconfont.css">
+</head>
+<body>
+<script src="robot/jquery-3.1.1.min.js"></script>
+<script src="robot/jquery.cookie.js"></script>
+<script src="robot/jquery.form.js"></script>
+<script type="text/javascript" src="robot/robot.js?022107"></script>
+<script>
+    var config ={
+        'mod': 'normal'
+        //初始时是否最大化窗口，PC网页时有效
+        , ismax: false
+        //（废除）请求的接口地址,移到全局配置 apiUrl
+        , 'appid': '55d28d61d3a93df500131c24'
+        //仅支持人工客服
+        , 'kefuOnly': false
+        //最小宽度
+        , 'minWidth': 800
+        //最小高度
+        , 'minHeight': 616
+        ,'chatHeight':354
+        ,'inputHeight':200
+        //设置颜色
+        , 'colors': {
+        //头部颜色
+        'header': '#2d8ef2'
+            //边框颜色（mini模式下有效）
+            , 'border': '#2d8ef2'
+            //发送按钮颜色
+            , 'button': '#2d8ef2'
+    }
+        //头部title文本
+        //, title: '测试标题'
+        //快速提交问题列表
+    , 'quicks': [
+        '帮我查个问题'
+        , '帮我记个东西'
+        , '帮我建立管理端'
+            ,'帮我翻译一下'
+    ]
+        //左侧工具栏，格式{label: '文本',icon: 'icon图标地址60*60',
+//        , 'tools': [
+//        {label: '天气预报',icon: 'http://img.alicdn.com/imgextra/i3/TB16M.kJpXXXXXAXVXXwu0bFXXX.png', href:'#'}
+//        , {label: '听首歌',icon: 'http://img.alicdn.com/imgextra/i3/TB17xcEJpXXXXXfXXXXwu0bFXXX.png', href:'#'}
+//        , {label: '指南针',icon: 'http://img.alicdn.com/imgextra/i1/TB10VUAJpXXXXczXXXXwu0bFXXX.png', href:'#'}
+//        , {label: '常用帮助',icon: 'http://img.alicdn.com/imgextra/i2/TB1FX7tJpXXXXccXpXXwu0bFXXX.png', href:'#'}
+//    ]
+        //浮动层zindex
+        //, zindex: 999
+        //是否显示大窗口模式下的左边
+        , 'showLeftPanel': true
+        //是否显示小窗口模式下的图标按钮
+        , 'showSideBtn': true
+        //显示版权信息
+        , 'showCopyright': true
+        //文本框提示文本
+        , 'placeholder': '文本框提示文本'
+        //客服图片 80*80像素
+        , 'callImg': 'http://img.alicdn.com/imgextra/i4/TB1tMo3JpXXXXbwXVXXwu0bFXXX.png'
+        //二维码图片 80*80像素
+        , 'codeImg': 'http://img.alicdn.com/imgextra/i1/TB197MVJpXXXXXuXVXXSutbFXXX.jpg'
+        //（废除）点击二维码显示的大图片 262*262像素
+        , 'codeBigImg': 'http://img.alicdn.com/imgextra/i1/TB197MVJpXXXXXuXVXXSutbFXXX.jpg'
+        //机器人欢迎语
+        , 'welcome': 'Hi，我是$name'
+        //机器人昵称
+        , 'nick': '小R'
+        //消息发送后文本框是否自动失去焦点
+        //, autoblur: false
+        , 'logo': 'images/timg.jpg'
+        , 'headImg': 'images/timg.jpg'
+        , 'visitImg': 'images/visitor.jpg'
+        ,'sign':'好想知道，明天的我，会是怎样'
+        //, headImg: 'http://himg.baidu.com/sys/portrait/hotitem/wildkid/1'
+        , 'feedBtn': {
+        //反馈的链接地址
+        'url': '#'
+            //反馈颜色背景
+            , 'color': '#20a56e'
+    }
+    }
+var myrobot = new $robotR(config);
+//    myrobot.send('测试');
+    //    myrobot.getMsg('测试回复');
+//    myrobot.on('sendMessage',function () {
+//        alert(1);
+//
+//    })
+
+    var socket = new WebSocket('ws://192.168.33.10:7272');
+//    var socket = new WebSocket('ws://119.29.2.112:7272');
+    socket.onopen = function(){
+        console.log('connect success');
+    };
+    socket.onmessage = function(res){
+        res = JSON.parse(res.data);
+        console.log(res);
+        if(res.type != 'ping'){
+            myrobot.getMsg(res.content); //res.data即你发送消息传递的数据（阅读：监听发送的消息）
+        }
+    };
+
+    myrobot.on('sendMessage', function(res){
+        //监听到上述消息后，就可以轻松地发送socket了，如：
+        console.log(res);
+        var msg = {
+            "type": "chatMessage" //随便定义，用于在服务端区分消息类型
+            ,"data": res.detail
+        };
+        console.log(msg);
+        socket.send(JSON.stringify(msg));
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+CSS3 background-size属性
+background-size属性和background-origin属性、background-clip属性一 样，也是CSS3对于background新增加的属性。它的作用是指定背景图片的大小，比如：对于一个div块，我们需要为它添加一张图片作为背景，然 而图片大小并非总能尽如人意，但我们又不想使用background-repeat属性让背景平铺，那么这时我们就可以使用background- size属性使图片放大或者是缩小来适应div块，当然这也可能会造成背景图的失真。
+下面我们就先从它的语法说起吧：
+background-size ：[ <length> | <percentage> | auto ]{1,2} | cover | contain ；
+这 个属性有2个可选值，第1个值用于指定背景图的宽width，第2个值用于指定背景图的高height，如果只设定1个值，则第2个值默认为自动 auto。这两个值可取数字（单位为px）也可以取百分比，当指定为百分比时，大小会由所在区域的宽度、高度，以及background-origin的 位置决定，当然还可以通过cover和contain来对图片进行伸缩。
+cover：用于等比放大背景图
+contain：用于等比缩小背景图(背景图需大于块，否则背景图仍会被放大以适应块)
+auto：默认值
+下面我们就用实例来看一下它们的效果吧
+首先看一下初始代码及效果
+HTML代码：
+1
+2
+3
+<div class="div1">
+    BeyondWeb.cn-记录与分享前端开发的点点滴滴
+</div>
+CSS代码：
+1
+2
+3
+4
+5
+6
+7
+8
+9
+.div1{
+    width:200px;
+    height:100px;
+    color:#fff;
+    font-size:12px;
+    border:10px dotted #333;
+    padding:10px;
+    background:#666 url(girl.jpg) no-repeat;
+}
+初始效果图：
+
+1、background-size取固定值
+CSS代码：
+1
+2
+3
+4
+5
+6
+7
+8
+.div1{
+    ...
+    -moz-background-size:200px 100px;
+    -webkit-background-size:200px 100px;
+    -o-background-size:200px 100px;
+    background-size:200px 100px;
+    ...
+}
+效果图：
+
+2、background取百分比
+CSS代码：
+1
+2
+3
+4
+5
+6
+7
+8
+.div1{
+    ...
+    -moz-background-size:90% 60%;
+    -webkit-background-size:90% 60%;
+    -o-background-size:90% 60%;
+    background-size:90% 60%;
+    ...
+}
+效果图：
+
+3、background取cover
+CSS代码：
+1
+2
+3
+4
+5
+6
+7
+8
+.div1{
+    ...
+    -moz-background-size:cover;
+    -webkit-background-size:cover;
+    -o-background-size:cover;
+    background-size:cover;
+    ...
+}
+效果图：
+
+为了填满背景，此时是把原图等比放大了
+4、background取contain
+CSS代码：
+1
+2
+3
+4
+5
+6
+7
+8
+.div1{
+    ...
+    -moz-background-size:contain;
+    -webkit-background-size:contain;
+    -o-background-size:contain;
+    background-size:contain;
+    ...
+}
+效果图：
+
+此时图片并没有缩小，反而被放大了，其实这是因为原背景图比div块小的原因，那么如果我们照一张大一点的图片，那么会是什么效果呢？现在拿一张比上面div块大的多的图片试一试，CSS代码是不变的，来看一下效果：
+
+这时，背景图片被等比例缩小了，以适应div块。
+5、background取auto
+CSS代码：
+1
+2
+3
+4
+5
+6
+7
+8
+.div1{
+    ...
+    -moz-background-size:auto;
+    -webkit-background-size:auto;
+    -o-background-size:auto;
+    background-size:auto;
+    ...
+}
+效果图：
+
+auto是默认值，这和初始效果是一样的，背景图片不做任何的放大或者是缩小。
+好了，background-size属性就说这么多。
+</body>
+</html>
